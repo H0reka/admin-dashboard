@@ -14,22 +14,22 @@ import { Table, TD, TH, TR } from "@ag-media/react-pdf-table";
 import { useLocation } from "react-router-dom";
 
 Font.register({
-  family: 'Roboto',
+  family: "Roboto",
   fonts: [
     {
       src: "/fonts/Roboto-Bold.ttf",
-      fontWeight: 'bold',
+      fontWeight: "bold",
     },
     {
       src: "/fonts/Roboto-Medium.ttf",
-      fontWeight: 'medium',
+      fontWeight: "medium",
     },
     {
       src: "/fonts/Roboto-Regular.ttf",
-      fontWeight: 'normal',
+      fontWeight: "normal",
     },
   ],
-})
+});
 // Create styles
 const styles = StyleSheet.create({
   page: {
@@ -53,13 +53,94 @@ const tw = createTw({
     },
   },
 });
-// Create Document Component
+// Convert the amount to words
+const convertToWords = (num) => {
+  const ones = [
+    "",
+    "One",
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten",
+    "Eleven",
+    "Twelve",
+    "Thirteen",
+    "Fourteen",
+    "Fifteen",
+    "Sixteen",
+    "Seventeen",
+    "Eighteen",
+    "Nineteen",
+  ];
+  const tens = [
+    "",
+    "",
+    "Twenty",
+    "Thirty",
+    "Forty",
+    "Fifty",
+    "Sixty",
+    "Seventy",
+    "Eighty",
+    "Ninety",
+  ];
+  const suffixes = ["", "Thousand", "Lakh", "Crore"];
 
+  if (isNaN(num)) return "Invalid number";
+
+  let [integerPart, decimalPart] = num.toString().split(".");
+  integerPart = parseInt(integerPart, 10);
+  decimalPart = decimalPart ? parseInt(decimalPart.substring(0, 2), 10) : 0;
+
+  function convertLessThanThousand(n) {
+    if (n < 20) return ones[n];
+    if (n < 100)
+      return (
+        tens[Math.floor(n / 10)] + (n % 10 !== 0 ? " " + ones[n % 10] : "")
+      );
+    return (
+      ones[Math.floor(n / 100)] +
+      " Hundred" +
+      (n % 100 !== 0 ? " and " + convertLessThanThousand(n % 100) : "")
+    );
+  }
+
+  let word = "";
+  let i = 0;
+
+  while (integerPart > 0) {
+    let part = integerPart % 1000;
+    if (part !== 0) {
+      word =
+        convertLessThanThousand(part) +
+        (suffixes[i] ? " " + suffixes[i] + " " : "") +
+        word;
+    }
+    integerPart = Math.floor(integerPart / 1000);
+    i++;
+  }
+
+  let result = "Rupees " + word.trim();
+
+  if (decimalPart > 0) {
+    result += " and " + convertLessThanThousand(decimalPart) + " Paise";
+  }
+
+  return result + " Only";
+};
 const Doc = ({ orders }) => (
   <Document>
     {orders.map((order, index) => (
       <Page key={index} size="A4" style={styles.page}>
-        <View style={tw("flex flex-row justify-between items-center p-3")} fixed>
+        <View
+          style={tw("flex flex-row justify-between items-center p-3")}
+          fixed
+        >
           <View style={tw("w-[26rem] flex flex-col gap-[0.2rem]")}>
             <Text style={[tw("font-bold"), styles.textBold]}>
               Horeka Supply India Private Limited
@@ -94,10 +175,8 @@ const Doc = ({ orders }) => (
               <Text style={tw("text-sm")}>State: {order.outlet.state}</Text>
             </View>
             <View>
-              <Text style={tw("mb-2 text-sm font-bold")}>
-                Invoice Details
-              </Text>
-              <Text style={tw("text-sm")}>Invoice No.: </Text>
+              <Text style={tw("mb-2 text-sm font-bold")}>Invoice Details</Text>
+              <Text style={tw("text-sm")}>Invoice No.: HRKS</Text>
               <Text style={tw("text-sm")}>
                 Date: {new Date(Date.now()).toDateString()}
               </Text>
@@ -127,9 +206,17 @@ const Doc = ({ orders }) => (
                 <TD>{item.quantity}</TD>
                 <TD>{item.product.unit.name}</TD>
                 <TD>₹ {item.product.moqSalePrice}</TD>
-                <TD>₹ {Math.trunc(item.price * item.quantity*100)/100}</TD>
+                <TD>₹ {Math.trunc(item.price * item.quantity * 100) / 100}</TD>
                 <TD>{item.product.gstPercentage}</TD>
-                <TD>₹ {Math.trunc(100* item.price * item.quantity * (1+(item.product.gstPercentage/100)))/100}</TD>
+                <TD>
+                  ₹{" "}
+                  {Math.trunc(
+                    100 *
+                      item.price *
+                      item.quantity *
+                      (1 + item.product.gstPercentage / 100)
+                  ) / 100}
+                </TD>
               </TR>
             ))}
           </Table>
@@ -137,8 +224,10 @@ const Doc = ({ orders }) => (
         <View style={tw("flex flex-row gap-4")} wrap={false}>
           <View style={tw("p-3 flex flex-col gap-4")}>
             <View style={tw("flex flex-col gap-2")}>
-              <Text style={tw("text-sm font-bold")}>Invoice Amount in Words</Text>
-              <Text style={tw("text-xs")}>Invoice Amount in Words</Text>
+              <Text style={tw("text-sm font-bold")}>
+                Invoice Amount in Words
+              </Text>
+              <Text style={tw("text-xs")}>{convertToWords(order.amount)}</Text>
             </View>
             <View style={tw("flex flex-col gap-2")}>
               <Text style={tw("text-sm font-bold")}>Terms and Conditions</Text>
@@ -211,8 +300,12 @@ const Doc = ({ orders }) => (
                     Invoice Details
                   </Text>
                   <Text style={tw("text-sm")}>Invoice No.: </Text>
-                  <Text style={tw("text-sm")}>Invoice Date: {new Date(Date.now()).toDateString()}</Text>
-                  <Text style={tw("text-sm")}>Invoice Amount: ₹ {order.amount}</Text>
+                  <Text style={tw("text-sm")}>
+                    Invoice Date: {new Date(Date.now()).toDateString()}
+                  </Text>
+                  <Text style={tw("text-sm")}>
+                    Invoice Amount: ₹ {order.amount}
+                  </Text>
                 </View>
               </View>
               <View>

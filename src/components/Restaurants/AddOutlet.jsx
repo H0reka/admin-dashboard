@@ -61,22 +61,26 @@ const AddOutlet = () => {
   const [previousDues, setPreviousDues] = useState(false);
   const token = Cookies.get("dev.admin.horeka");
   const convertTime = (time) => {
-    let hour = Number(time.substring(0, 2));
-    let minutes = time.substring(3, 5);
-    let finalTime = "";
-    if (hour > 12) {
-      hour = hour - 12;
-      finalTime =
-        hour > 9
-          ? hour + ":" + minutes + " PM"
-          : "0" + hour + ":" + minutes + " PM";
-    } else {
-      finalTime =
-        hour > 9
-          ? hour + ":" + minutes + " AM"
-          : "0" + hour + ":" + minutes + " AM";
-    }
-    return finalTime;
+    const [hours, minutes] = time.split(":").map(Number);
+
+    // Get the current date
+    const dateObj = new Date();
+
+    // Set the current date's time to the provided time (hours and minutes)
+    dateObj.setHours(hours, minutes, 0, 0);
+
+    // Get the local time offset (in minutes) for IST (GMT+5:30)
+    const timezoneOffset = 5 * 60 + 30; // 5 hours 30 minutes offset
+
+    // Create an ISO 8601 string with the correct time and date
+    // First, generate the UTC ISO string
+    let isoString = dateObj.toISOString();
+
+    // Adjust the time to reflect the IST time zone (by adding the offset)
+    const offsetDate = new Date(dateObj.getTime() + timezoneOffset * 60 * 1000);
+
+    // Return the string in ISO format for IST (without 'Z' or timezone offset adjustment)
+    return offsetDate.toISOString().slice(0, 19);
   };
   const onSubmit = async (data) => {
     if (rowData) {
@@ -86,6 +90,7 @@ const AddOutlet = () => {
         restaurantId,
         kitchenStartTime: convertTime(data.kitchenStartTime),
       };
+      console.log(payload.kitchenStartTime);
       const paymentWindowPayload = {
         outletId: rowData.id,
         paymentWindow: data.paymentWindow,
@@ -107,7 +112,7 @@ const AddOutlet = () => {
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        toast.success("Outlet Updated Successfully!")
+        toast.success("Outlet Updated Successfully!");
       } catch (err) {
         toast.error("Some Error Occurred");
       }

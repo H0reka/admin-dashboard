@@ -1,18 +1,13 @@
 import React, { createContext, useEffect, useState } from "react";
 import * as yup from "yup";
-import InputField from "../../common/InputField";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Button from "../../common/Button";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import TextInput from "../../common/TextInput";
 import NumberInput from "../../common/NumberInput";
 import Cookies from "js-cookie";
 import SearchSelect from "./SearchSelect";
 import { toast } from "react-toastify";
-import { FaPlus } from "react-icons/fa";
-import TimePicker from "react-time-picker";
 
 export const RestaurantContext = createContext();
 const restaurantSchema = yup.object().shape({
@@ -61,49 +56,66 @@ const RestaurantForm = ({ initialData, submitForm }) => {
       openingTime: initialData?.openingTime.substring(11, 16) || "",
       fssai: initialData?.fssai || "",
       gstNumber: initialData?.gstNumber || "",
-      // outlets: initialData?.outlets || [],
     },
   });
   const [owners, setOwners] = useState([]);
   const [paymentWindows, setPaymentWindows] = useState([]);
   const [phoneNum, setPhoneNum] = useState(initialData?.owner.phoneNum || "");
   const token = Cookies.get("dev.admin.horeka");
-  const convertTime = (time) =>{
-    let hour = Number(time.substring(0,2));
-    let minutes = time.substring(3,5);
-    let finalTime = "";
-    if(hour > 12){
-      hour = hour-12;
-      finalTime = hour>9?hour+":"+minutes+" PM":'0'+hour+":"+minutes+" PM";
-    }
-    else{
-      finalTime = hour>9?hour+":"+minutes+" AM":'0'+hour+":"+minutes+" AM";
-    }
-    return finalTime;
-  }
+  const convertTime = (time) => {
+    const [hours, minutes] = time.split(":").map(Number);
+
+    // Get the current date
+    const dateObj = new Date();
+
+    // Set the current date's time to the provided time (hours and minutes)
+    dateObj.setHours(hours, minutes, 0, 0);
+
+    // Get the local time offset (in minutes) for IST (GMT+5:30)
+    const timezoneOffset = 5 * 60 + 30; // 5 hours 30 minutes offset
+
+    // Create an ISO 8601 string with the correct time and date
+    // First, generate the UTC ISO string
+    let isoString = dateObj.toISOString();
+
+    // Adjust the time to reflect the IST time zone (by adding the offset)
+    const offsetDate = new Date(dateObj.getTime() + timezoneOffset * 60 * 1000);
+
+    // Return the string in ISO format for IST (without 'Z' or timezone offset adjustment)
+    return offsetDate.toISOString().slice(0, 19);
+  };
   const onSubmit = async (data) => {
     if (initialData) {
-      const payload = { ...data, id: initialData.id, openingTime: convertTime(data.openingTime) };
-      console.log(payload);
+      const payload = {
+        ...data,
+        id: initialData.id,
+        openingTime: convertTime(data.openingTime),
+      };
       try {
         //API Call to PUT and update a restaurant
         const res = await axios.put(`/api/restaurants`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if(res.status == 200) toast.success("Restaurant Updated Successfully!")
-          else throw new Error();
+        if (res.status == 200)
+          toast.success("Restaurant Updated Successfully!");
+        else throw new Error();
       } catch (err) {
         toast.error("Some Error Occurred");
       }
     } else {
-      const payload = {...data, openingTime: convertTime(data.openingTime)};
+      const payload = { ...data, openingTime: convertTime(data.openingTime) };
       try {
         //API Call to POST a new restaurant
-        const res = await axios.post(`/api/restaurants?phoneNum=${phoneNum.substring(1)}`, payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if(res.status == 200) toast.success("Restaurant Created Successfully!")
-          else throw new Error();
+        const res = await axios.post(
+          `/api/restaurants?phoneNum=${phoneNum.substring(1)}`,
+          payload,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (res.status == 200)
+          toast.success("Restaurant Created Successfully!");
+        else throw new Error();
       } catch (err) {
         toast.error("Some Error Occurred");
       }

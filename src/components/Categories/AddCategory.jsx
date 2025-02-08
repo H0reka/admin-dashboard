@@ -6,10 +6,13 @@ import Interface from "../../common/Image/Interface";
 import { FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import uploadToS3 from "../../common/Image/UploadToS3";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 function MultiImageCropper() {
   const location = useLocation();
   const categoryData = location.state?.data;
+  const token = Cookies.get("dev.admin.horeka");
   const navigate = useNavigate();
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
