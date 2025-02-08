@@ -5,6 +5,7 @@ import OrderTable from "./OrderTable";
 import Datepicker from "react-tailwindcss-datepicker";
 import { IoClose } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import Button from "../../common/Button";
 
 const Orders = () => {
   const token = Cookies.get("dev.admin.horeka");
@@ -57,7 +58,7 @@ const Orders = () => {
     navigate("/outletbills", { state: { orders: orders } });
   };
   return (
-    <div className="ml-[4.2rem] lg:ml-[10.3rem]">
+    <div className="ml-[4.2rem] lg:ml-[10.3rem] overflow-scroll no-scrollbar h-[90vh]">
       <header className="text-3xl text-brand font-bold mb-4">Orders</header>
       <div className="flex md:flex-row flex-col justify-between">
         <select
@@ -104,7 +105,10 @@ const Orders = () => {
           <option value="deliveredAt">Delivered At</option>
           <option value="amount">Amount</option>
         </select>
-        <button onClick={() => resetFilters()}>
+        <button
+          onClick={() => resetFilters()}
+          className="flex flex-row justify-center items-center"
+        >
           <IoClose />
           Clear
         </button>
@@ -134,18 +138,12 @@ const Orders = () => {
           {">"}
         </button>
       </div>
-      <div className="flex flex-row justify-end gap-4">
-        <div
-          className=" bg-white rounded-lg p-3 text-black hover:shadow-md hover:shadow-white transition-all duration-200"
-          onClick={handlePoolClick}
-        >
-          Pool Orders
+      <div className="flex md:flex-row flex-col justify-end gap-4 p-2">
+        <div onClick={handlePoolClick}>
+          <Button text="Pool Orders" />
         </div>
-        <div
-          className=" bg-white rounded-lg p-3 text-black hover:shadow-md hover:shadow-white transition-all duration-200"
-          onClick={handleInvoiceClick}
-        >
-          Download Invoices
+        <div onClick={handleInvoiceClick}>
+          <Button text="Download Invoices" />
         </div>
       </div>
     </div>

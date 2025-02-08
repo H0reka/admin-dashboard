@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import InputField from "../../common/InputField";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
@@ -8,13 +8,20 @@ import { toast } from "react-toastify";
 import uploadToS3 from "../../common/Image/UploadToS3";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
+const categorySchema = yup.object().shape({
+  name: yup.string().required(),
+  imageUrl: yup.string().required(),
+});
 function MultiImageCropper() {
   const location = useLocation();
   const categoryData = location.state?.data;
   const token = Cookies.get("dev.admin.horeka");
   const navigate = useNavigate();
   const { control, handleSubmit, setValue } = useForm({
+    resolver: yupResolver(categorySchema),
     defaultValues: {
       name: categoryData?.name,
       imageUrl: categoryData?.imageUrl,
@@ -37,7 +44,6 @@ function MultiImageCropper() {
     setValue("imageUrl", "");
   };
   const onSubmit = (data) => {
-    console.log(data);
     //API call to add the category
     axios.post("/api/categories", data, {
       headers: { Authorization: `Bearer ${token}` },
@@ -46,7 +52,7 @@ function MultiImageCropper() {
     toast.success("Category Added Successfully!");
   };
   return (
-    <div className="ml-40 p-2 overflow-scroll no-scrollbar h-[90vh]">
+    <div className="ml-[4.2rem] lg:ml-[10.3rem] p-2 overflow-scroll no-scrollbar h-[90vh]">
       <header className="text-3xl text-brand font-bold">Add Category</header>
       <form
         className="flex flex-col gap-2 md:p-8 justify-center"

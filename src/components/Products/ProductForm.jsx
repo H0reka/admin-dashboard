@@ -126,6 +126,7 @@ const ProductForm = ({ initialData, submitFunction }) => {
         imageUrls: images,
         nonVeg,
       };
+      console.log("Hello");
       //API call to update the product
       try {
         await axios.put("/api/products", payload, {
@@ -188,9 +189,9 @@ const ProductForm = ({ initialData, submitFunction }) => {
         handlePurchasePriceChange,
       }}
     >
-      <div className=" py-16 text-black ">
+      <div className="py-16 text-black">
         <form
-          className="col-span-12 grid md:grid-cols-12 gap-2 px-28 justify-between items-center"
+          className="col-span-12 md:grid md:grid-cols-12 flex flex-col gap-2 lg:px-28 justify-between items-center"
           onSubmit={handleSubmit(onSubmit)}
         >
           <TextInput name="name" label="Product Name" context="product" />
@@ -350,8 +351,8 @@ const ProductForm = ({ initialData, submitFunction }) => {
             <span className=" text-white">Non Veg</span>
           </label>
           {/* Bulk Quantity Add*/}
-          <div className="col-span-12 m-3 text-white flex flex-col gap-2">
-            <div className="flex flex-row items-center gap-72">
+          <div className="col-span-6 m-3 text-white flex flex-col gap-2">
+            <div className="flex items-center flex-row justify-between">
               <p className="font-semibold">BULKS</p>
               <button
                 type="button"

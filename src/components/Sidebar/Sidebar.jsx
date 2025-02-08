@@ -23,9 +23,9 @@ const Sidebar = () => {
     return <Navigate to="/login" />;
   }
   return (
-    <div className="fixed flex items-center justify-center z-50 overflow-y-scroll no-scrollbar">
+    <div className="fixed flex items-center justify-center z-50 ">
       <div
-        className={`lg:w-40 bg-indigo-600/30 backdrop-blur-lg lg:h-[100vh] rounded-r-2xl text-white transition-all duration-300 ${
+        className={`overflow-y-scroll no-scrollbar h-[90vh] lg:w-40 bg-indigo-600/30 backdrop-blur-lg md:h-[100vh] rounded-r-2xl text-white transition-all duration-300 ${
           openSidebar ? "w-40" : "w-16"
         }`}
       >
@@ -156,35 +156,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
-// import React, { useState } from 'react'
-// import { FaBars, FaHome } from 'react-icons/fa'
-// import { IoCloseSharp } from 'react-icons/io5';
-
-// const Sidebar = () => {
-//     const [openSidebar, setOpenSidebar] = useState(false);
-//   return (
-//     <div className='flex'>
-//       <div className={`lg:w-64 bg-white h-[100vh] text-black transition-width duration-300 ${openSidebar?"w-64":"w-20"}`}>
-//         <div className='flex justify-between items-center'>
-//             <h1 className={`lg:opacity-100 text-brand font-bold text-4xl transition-opacity duration-300 ${
-//     openSidebar ? "opacity-100 delay-5000" : "opacity-0 hidden"
-//   }`}>horeka.app</h1>
-//             <button className='lg:hidden block' onClick={() => setOpenSidebar(!openSidebar)}>
-//                 {openSidebar?<IoCloseSharp size={24}/>:<FaBars size={24}/>}
-//             </button>
-//         </div>
-//         <nav className='mt-4'>
-//             <ul>
-//                 <li className='flex items-center p-4 hover:bg-indigo-700 cursor-pointer'>
-//                     <FaHome size={24}/>
-//                     <span className='ml-4 lg:block hidden'>Home</span>
-//                 </li>
-//             </ul>
-//         </nav>
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default Sidebar
