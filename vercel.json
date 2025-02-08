@@ -1,0 +1,104 @@
+{
+  "rewrites": [
+    {
+      "source": "/login",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/orders",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/categories",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/restaurants",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/vendors",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/purchase",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/users",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/addproduct",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/editproduct/:id",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/updatechicken",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/addcategory",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/adduser",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/addrestaurant",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/addpurchase",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/editrestaurant",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/addoutlet",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/editorder/:id",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/addvendor",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/poolorders",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/outletbills",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/purchasedetails",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/inventory",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/expenses",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/inventorydetails",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/addexpense",
+      "destination": "/index.html"
+    }
+  ]
+}
