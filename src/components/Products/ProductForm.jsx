@@ -3,9 +3,8 @@ import * as yup from "yup";
 import InputField from "../../common/InputField";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Button from "../../common/Button";
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import TextInput from "../../common/TextInput";
@@ -14,6 +13,7 @@ import Interface from "../../common/Image/Interface";
 import { AddStorage, AddUnit } from "./ProductPopups";
 import { toast } from "react-toastify";
 import uploadToS3 from "../../common/Image/UploadToS3";
+import { server } from "../../main";
 
 const productSchema = yup.object().shape({
   name: yup.string().required().min(1),
@@ -129,7 +129,7 @@ const ProductForm = ({ initialData, submitFunction }) => {
       console.log("Hello");
       //API call to update the product
       try {
-        await axios.put("/api/products", payload, {
+        await axios.put(`${server}/admin/products`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         toast.success("Product Updated Successfully!");
@@ -139,7 +139,7 @@ const ProductForm = ({ initialData, submitFunction }) => {
     } else {
       //API call to post new product
       try {
-        await axios.post("/api/products", data, {
+        await axios.post(`${server}/admin/products`, data, {
           headers: { Authorization: `Bearer ${token}` },
         });
         toast.success("Product Updated Successfully!");
@@ -151,21 +151,21 @@ const ProductForm = ({ initialData, submitFunction }) => {
   useEffect(() => {
     try {
       axios
-        .get("/api/units", {
+        .get(`${server}/admin/units`, {
           headers: {
             Authorization: `Bearer ${Cookies.get("dev.admin.horeka")}`,
           },
         })
         .then((res) => setUnitOptions(res.data));
       axios
-        .get("/api/storageTypes", {
+        .get(`${server}/admin/storageTypes`, {
           headers: {
             Authorization: `Bearer ${Cookies.get("dev.admin.horeka")}`,
           },
         })
         .then((res) => setStorageOptions(res.data));
       axios
-        .get("/api/categories", {
+        .get(`${server}/admin/categories`, {
           headers: {
             Authorization: `Bearer ${Cookies.get("dev.admin.horeka")}`,
           },

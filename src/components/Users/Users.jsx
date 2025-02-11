@@ -4,6 +4,7 @@ import axios from "axios";
 import Button from "../../common/Button";
 import Select from "../../common/Select";
 import Cookies from "js-cookie";
+import { server } from "../../main";
 
 const userOptions = [
   { Admin: "ADMIN" },
@@ -20,7 +21,7 @@ const Users = () => {
   const token = Cookies.get("dev.admin.horeka");
   useEffect(() => {
     axios
-      .get(`api/users?role=${role}`, {
+      .get(`${server}/admin/users?role=${role}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -36,8 +37,11 @@ const Users = () => {
     <div className="ml-[4.2rem] lg:ml-[10.3rem]">
       <h1 className="text-3xl text-brand font-bold mb-4">Users</h1>
       <div className="flex flex-row justify-between items-center">
-        <Button text="Add User" link="/adduser"/>
-        <div className="flex flex-row items-center gap-4"><span>Filter: </span><Select options={userOptions} init={"Admin"} func={setRole} /></div>
+        <Button text="Add User" link="/adduser" />
+        <div className="flex flex-row items-center gap-4">
+          <span>Filter: </span>
+          <Select options={userOptions} init={"Admin"} func={setRole} />
+        </div>
       </div>
       {userData.length == 0 ? "Loading..." : <UserTable data={userData} />}
     </div>

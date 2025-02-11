@@ -2,7 +2,8 @@ import React, { useContext, useState } from "react";
 import axios from "axios";
 import { OutletContext } from "./AddOutlet";
 import { toast } from "react-toastify";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
+import { server } from "../../main";
 
 const BalancePopup = ({ id, walletBalance, creditLimit }) => {
   //newBalance is the amount added in wallet/ previous dues
@@ -12,34 +13,43 @@ const BalancePopup = ({ id, walletBalance, creditLimit }) => {
   const { popUp, setPopUp, previousDues } = useContext(OutletContext);
   const token = Cookies.get("dev.admin.horeka");
   const handleSubmit = async () => {
-    if(previousDues){
-      const payload = {outletId:id, creditLimit: onboardingCreditLimit, walletBalance: onboardingCreditLimit - newBalance};
+    if (previousDues) {
+      const payload = {
+        outletId: id,
+        creditLimit: onboardingCreditLimit,
+        walletBalance: onboardingCreditLimit - newBalance,
+      };
       //API call to set onboarding balance
-      try{
-        const res = await axios.put("/api/payment/outlet/wallet", payload, {headers:{Authorization: `Bearer ${token}`}});
-      if(res.status == 200) toast.success("Limit Set!");
-      else throw new Error();
+      try {
+        const res = await axios.put(
+          `${server}/admin/payment/outlet/wallet`,
+          payload,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (res.status == 200) toast.success("Limit Set!");
+        else throw new Error();
+      } catch (err) {
+        toast.error("Some Error occurred");
       }
-      catch(err)
-      {
-        toast.error("Some Error occurred")
-      }
-    }
-    else{
-      const payload = {outletId:id, amount:newBalance }
+    } else {
+      const payload = { outletId: id, amount: newBalance };
       console.log(payload);
       //API call to add balance
-      try{
-        const res = await axios.post("/api/payment/outlet/cash", payload, {headers:{Authorization: `Bearer ${token}`}});
+      try {
+        const res = await axios.post(
+          `${server}/admin/payment/outlet/cash`,
+          payload,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         toast.success("Balance Updated!");
-      }
-      catch(err)
-      {
-        toast.error("Some Error occurred")
+      } catch (err) {
+        toast.error("Some Error occurred");
       }
     }
     setPopUp(false);
-  }
+  };
   return (
     <>
       {popUp && (
@@ -65,18 +75,26 @@ const BalancePopup = ({ id, walletBalance, creditLimit }) => {
                 placeholder="Balance"
                 className="p-3 bg-neutral-900 rounded-xl text-white"
                 type="number"
-                onChange={(e) =>
-                  setNewBalance(Number(e.target.value))
-                }
+                onChange={(e) => setNewBalance(Number(e.target.value))}
               />
               <h1>
                 <span className="font-semibold">New Balance:</span> ₹
-                {newBalance+walletBalance}
+                {newBalance + walletBalance}
               </h1>
               <div className="flex flex-row justify-end gap-2">
-              <input type="button" className="p-2 font-bold text-white" onClick={()=>setPopUp(false)} value="Cancel"/>
-              <input type="button" className="p-2 font-bold text-white" onClick={handleSubmit} value="Submit" />
-             </div>
+                <input
+                  type="button"
+                  className="p-2 font-bold text-white"
+                  onClick={() => setPopUp(false)}
+                  value="Cancel"
+                />
+                <input
+                  type="button"
+                  className="p-2 font-bold text-white"
+                  onClick={handleSubmit}
+                  value="Submit"
+                />
+              </div>
             </div>
           ) : (
             <div className="absolute z-30 justify-center top-[30%] flex flex-col gap-3 left-[40%] h-72  backdrop-blur-xl bg-indigo-500/50 p-4 rounded-lg">
@@ -101,10 +119,20 @@ const BalancePopup = ({ id, walletBalance, creditLimit }) => {
                 <span className="font-semibold">New Onboarding Balance:</span> ₹
                 {onboardingCreditLimit - newBalance}
               </h1>
-             <div className="flex flex-row justify-end gap-2">
-             <input type="button" className="p-2 font-bold text-white" onClick={()=>setPopUp(false)} value="Cancel"/>
-             <input type="button" className="p-2 font-bold text-white" onClick={handleSubmit} value="Submit" />
-             </div>
+              <div className="flex flex-row justify-end gap-2">
+                <input
+                  type="button"
+                  className="p-2 font-bold text-white"
+                  onClick={() => setPopUp(false)}
+                  value="Cancel"
+                />
+                <input
+                  type="button"
+                  className="p-2 font-bold text-white"
+                  onClick={handleSubmit}
+                  value="Submit"
+                />
+              </div>
             </div>
           )}
         </>

@@ -8,6 +8,7 @@ import NumberInput from "../../common/NumberInput";
 import Cookies from "js-cookie";
 import SearchSelect from "./SearchSelect";
 import { toast } from "react-toastify";
+import { server } from "../../main";
 
 export const RestaurantContext = createContext();
 const restaurantSchema = yup.object().shape({
@@ -93,7 +94,7 @@ const RestaurantForm = ({ initialData, submitForm }) => {
       };
       try {
         //API Call to PUT and update a restaurant
-        const res = await axios.put(`/api/restaurants`, payload, {
+        const res = await axios.put(`${server}/admin/restaurants`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.status == 200)
@@ -107,7 +108,7 @@ const RestaurantForm = ({ initialData, submitForm }) => {
       try {
         //API Call to POST a new restaurant
         const res = await axios.post(
-          `/api/restaurants?phoneNum=${phoneNum.substring(1)}`,
+          `${server}/admin/restaurants?phoneNum=${phoneNum.substring(1)}`,
           payload,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -123,14 +124,14 @@ const RestaurantForm = ({ initialData, submitForm }) => {
   };
   useEffect(() => {
     axios
-      .get(`api/users?role=OWNER`, {
+      .get(`${server}/admin/users?role=OWNER`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => setOwners(res.data));
     axios
-      .get("api/paymentwindow", {
+      .get(`${server}/admin/paymentwindow`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setPaymentWindows(res.data));

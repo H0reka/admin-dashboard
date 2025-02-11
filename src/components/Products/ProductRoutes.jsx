@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductForm from "./ProductForm";
-
+import { server } from "../../main";
 export const AddProduct = () => {
   const handleSubmission = (data) => {
     console.log(data);
@@ -19,7 +19,7 @@ export const EditProduct = () => {
   const { id } = useParams();
   const [initialData, setInitialData] = useState();
   useEffect(() => {
-    axios.get(`/noadminapi/products/${id}`).then((res) => {
+    axios.get(`${server}/products/${id}`).then((res) => {
       setInitialData(res.data);
     });
   }, []);

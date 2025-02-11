@@ -4,6 +4,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import Button from "../../common/Button";
 import { toast } from "react-toastify";
+import { server } from "../../main";
 
 const UpdateChicken = () => {
   const [chickenProds, setChickenProds] = useState([]);
@@ -12,7 +13,7 @@ const UpdateChicken = () => {
   const token = Cookies.get("dev.admin.horeka");
 
   useEffect(() => {
-    axios.get("/noadminapi/products/categories/8?size=1000").then((res) => {
+    axios.get(`${server}/products/categories/8?size=1000`).then((res) => {
       const array = res.data.content;
       setChickenProds(array);
       const paperPrice = Math.trunc(
@@ -35,7 +36,7 @@ const UpdateChicken = () => {
     //API call to update the chicken prices
     try {
       axios.put(
-        "/api/products/chicken",
+        `${server}/admin/products/chicken`,
         { chickenMoqPriceList: updatedPrices },
         { headers: { Authorization: `Bearer ${token}` } }
       );

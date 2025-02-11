@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
+import { server } from "../../main";
 
 const PoolOrders = () => {
   const location = useLocation();
@@ -19,7 +20,7 @@ const PoolOrders = () => {
   useEffect(() => {
     axios
       .get(
-        `/api/orders/pool?size=10000&sortBy=createdAt&sortDirection=asc&${
+        `${server}/admin/orders/pool?size=10000&sortBy=createdAt&sortDirection=asc&${
           orderStatus ? `orderStatus=${orderStatus}` : ""
         }&${fromDate && toDate ? `from=${fromDate}&to=${toDate}` : ""}`,
         {
@@ -57,20 +58,20 @@ const PoolOrders = () => {
         let countItems = 0;
         [...newItemMap.entries()].forEach(([categoryName, categoryMap]) => {
           [...categoryMap.entries()].forEach(([unitName, unitMap]) => {
-            countProds = countProds+unitMap.size;
+            countProds = countProds + unitMap.size;
             [...unitMap.entries()].forEach(([productName, qty]) => {
               countItems = countItems + qty;
             });
           });
         });
-        setTotalItems(countItems);setTotalProducts(countProds);
+        setTotalItems(countItems);
+        setTotalProducts(countProds);
         setLoading(false);
       });
-    
   }, []);
   const copyToClipboard = () => {
     let copytext = "";
-  
+
     [...itemMap.entries()].forEach(([categoryName, categoryMap]) => {
       copytext += categoryName + "\n";
       [...categoryMap.entries()].forEach(([unitName, unitMap]) => {
@@ -78,13 +79,13 @@ const PoolOrders = () => {
           copytext += `${productName}: \t${qty}${unitName}\n`;
         });
       });
-      copytext += '\n'+'\n';
+      copytext += "\n" + "\n";
     });
     navigator.clipboard.writeText(copytext).catch((err) => {
       console.error("Failed to copy: ", err);
     });
   };
-  
+
   return (
     <div className="ml-[4.2rem] lg:ml-[10.3rem] overflow-y-scroll h-[90vh] no-scrollbar">
       <header className="text-3xl text-brand font-bold">
@@ -96,7 +97,12 @@ const PoolOrders = () => {
           <span>Total Products: {totalProducts}</span>
         </div>
         <div>
-          <button className="bg-white text-black p-3 rounded-lg" onClick={copyToClipboard}>Copy to Clipboard</button>
+          <button
+            className="bg-white text-black p-3 rounded-lg"
+            onClick={copyToClipboard}
+          >
+            Copy to Clipboard
+          </button>
         </div>
       </div>
       <div className="p-3">
@@ -115,9 +121,9 @@ const PoolOrders = () => {
                     >
                       <p>{productName} </p>
                       <div className="flex flex-row">
-                      <span className="text-indigo-500 font-bold text-xl">
-                        {qty}
-                      </span>
+                        <span className="text-indigo-500 font-bold text-xl">
+                          {qty}
+                        </span>
                         {unitName}
                       </div>
                     </div>

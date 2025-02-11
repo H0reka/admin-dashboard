@@ -10,6 +10,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { server } from "../../main";
 
 const categorySchema = yup.object().shape({
   name: yup.string().required(),
@@ -45,7 +46,7 @@ function MultiImageCropper() {
   };
   const onSubmit = (data) => {
     //API call to add the category
-    axios.post("/api/categories", data, {
+    axios.post(`${server}/admin/categories`, data, {
       headers: { Authorization: `Bearer ${token}` },
     });
     navigate("/categories");

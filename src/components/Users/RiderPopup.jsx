@@ -7,7 +7,7 @@ const RiderPopup = ({ popup, setPopup, id }) => {
   const [rider, setRider] = useState({});
   useEffect(() => {
     axios
-      .get(`/noadminapi/rider/profile/${id}`, {
+      .get(`${server}/rider/profile/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -17,19 +17,23 @@ const RiderPopup = ({ popup, setPopup, id }) => {
   const handleVerify = () => {
     //API call to verify rider
     try {
-      axios.put(`/api/rider/${id}/verify`,{},{
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      axios.put(
+        `${server}/admin/rider/${id}/verify`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       toast.success("Rider Verified successfully!");
       setPopup(false);
     } catch (err) {
       toast.error("Some Error Occurred");
-      console.log(err.message)
+      console.log(err.message);
     }
   };
   return (
     <>
-      {popup&& (
+      {popup && (
         <>
           <div
             className={`w-[200vw] md:w-full h-full flex flex-col absolute top-0 left-0 bg-black/60 z-20  "block" : "hidden"
@@ -40,16 +44,55 @@ const RiderPopup = ({ popup, setPopup, id }) => {
             <h1 className="text-lg text-white font-semibold">Rider Profile</h1>
             <div className="flex flex-row gap-2">
               <div className="">
-                <h1 className="text-black font-semibold">Name:<span className="text-white font-normal"> {rider.name}</span></h1>
-                <h1 className="text-black font-semibold">Phone Number:<span className="text-white font-normal"> {rider.phoneNum}</span></h1>
-                <h1 className="text-black font-semibold">Email:<span className="text-white font-normal"> {rider.email}</span></h1>
-                <h1 className="text-black font-semibold">Vehicle Number: <span className="text-white font-normal">{rider.vehicleNumber}</span></h1>
-                <h1 className="text-black font-semibold">Vehicle Model: <span className="text-white font-normal">{rider.vehicleModel}</span></h1>
-                <h1 className="text-black font-semibold">DL Number: <span className="text-white font-normal">{rider.drivingLicenseNumber}</span></h1>
+                <h1 className="text-black font-semibold">
+                  Name:
+                  <span className="text-white font-normal"> {rider.name}</span>
+                </h1>
+                <h1 className="text-black font-semibold">
+                  Phone Number:
+                  <span className="text-white font-normal">
+                    {" "}
+                    {rider.phoneNum}
+                  </span>
+                </h1>
+                <h1 className="text-black font-semibold">
+                  Email:
+                  <span className="text-white font-normal"> {rider.email}</span>
+                </h1>
+                <h1 className="text-black font-semibold">
+                  Vehicle Number:{" "}
+                  <span className="text-white font-normal">
+                    {rider.vehicleNumber}
+                  </span>
+                </h1>
+                <h1 className="text-black font-semibold">
+                  Vehicle Model:{" "}
+                  <span className="text-white font-normal">
+                    {rider.vehicleModel}
+                  </span>
+                </h1>
+                <h1 className="text-black font-semibold">
+                  DL Number:{" "}
+                  <span className="text-white font-normal">
+                    {rider.drivingLicenseNumber}
+                  </span>
+                </h1>
               </div>
-              <div> <img src={rider.userImage} className="w-32 rounded-lg" alt="Rider Image" /></div>
+              <div>
+                {" "}
+                <img
+                  src={rider.userImage}
+                  className="w-32 rounded-lg"
+                  alt="Rider Image"
+                />
+              </div>
             </div>
-            <div className="cursor-pointer text-center bg-white w-fit text-black rounded-lg p-3 font-semibold hover:drop-shadow-xl transition-transform" onClick={handleVerify}>Verify Rider</div>
+            <div
+              className="cursor-pointer text-center bg-white w-fit text-black rounded-lg p-3 font-semibold hover:drop-shadow-xl transition-transform"
+              onClick={handleVerify}
+            >
+              Verify Rider
+            </div>
           </div>
         </>
       )}

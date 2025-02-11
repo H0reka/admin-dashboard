@@ -2,8 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Button from "../../common/Button";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import TextInput from "../../common/TextInput";
 import NumberInput from "../../common/NumberInput";
@@ -12,6 +11,7 @@ import InputField from "../../common/InputField";
 import TransacTable from "./TransactionTable";
 import BalancePopup from "./BalancePopup";
 import { toast } from "react-toastify";
+import { server } from "../../main";
 
 const outletSchema = yup.object().shape({
   name: yup.string().required().min(1),
@@ -37,7 +37,7 @@ const AddOutlet = () => {
     formState: { errors },
     register,
   } = useForm({
-    // resolver: yupResolver(productSchema),
+    resolver: yupResolver(productSchema),
     defaultValues: {
       name: rowData?.name || "",
       shippingAddress: rowData?.address || "",
@@ -97,16 +97,20 @@ const AddOutlet = () => {
       };
       try {
         //API Call to PUT the data
-        await axios.put(`/api/outlets`, payload, {
+        await axios.put(`${server}/admin/outlets`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         //API call to update payment window
-        await axios.put(`/api/outlets/paymentwindow`, paymentWindowPayload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await axios.put(
+          `${server}/admin/outlets/paymentwindow`,
+          paymentWindowPayload,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         //API call to update POD status
         await axios.put(
-          `/api/outlet/${rowData.id}/paymentondelivery?status=${
+          `${server}/admin/outlet/${rowData.id}/paymentondelivery?status=${
             POD ? "ENABLE" : "DISABLE"
           }`,
           {},
@@ -121,7 +125,7 @@ const AddOutlet = () => {
       console.log(payload);
       try {
         //API Call to POST a new outlet
-        axios.post(`/api/outlets`, payload, {
+        axios.post(`${server}/admin/outlets`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         toast.success("Outlet Added Successfully!");
@@ -132,7 +136,7 @@ const AddOutlet = () => {
   };
   useEffect(() => {
     axios
-      .get("api/paymentwindow", {
+      .get(`${server}/admin/paymentwindow`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setPaymentWindows(res.data));

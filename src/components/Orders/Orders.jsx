@@ -6,6 +6,7 @@ import Datepicker from "react-tailwindcss-datepicker";
 import { IoClose } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import Button from "../../common/Button";
+import { server } from "../../main";
 
 const Orders = () => {
   const token = Cookies.get("dev.admin.horeka");
@@ -27,7 +28,7 @@ const Orders = () => {
     const toDate = value.endDate ? new Date(value.endDate).toISOString() : null;
     axios
       .get(
-        `/api/orders/all?page=${
+        `${server}/admin/orders/all?page=${
           page - 1
         }&sortDirection=${sortDirection}&sortBy=${sortBy}&${
           orderStatus == "" ? "" : `orderStatus=${orderStatus}`
@@ -94,7 +95,6 @@ const Orders = () => {
           <option value="COMPLETED">Completed</option>
           <option value="CANCELLED">Cancelled</option>
         </select>
-
         <select
           name="Created At"
           id=""

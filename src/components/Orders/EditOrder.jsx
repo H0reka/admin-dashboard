@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import { FaEdit } from "react-icons/fa";
 import { DiscountPopup, RiderPopup } from "./OrderPopups";
+import { server } from "../../main";
 
 const EditOrder = () => {
   const { id } = useParams();
@@ -21,7 +22,7 @@ const EditOrder = () => {
   }
   useEffect(() => {
     axios
-      .get(`/api/orders/${id}`, {
+      .get(`${server}/admin/orders/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -33,7 +34,7 @@ const EditOrder = () => {
       .then((data) => {
         if (data?.outlet?.id) {
           axios
-            .get(`/api/owner/outlet/${data.outlet.id}`, {
+            .get(`${server}/admin/owner/outlet/${data.outlet.id}`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },

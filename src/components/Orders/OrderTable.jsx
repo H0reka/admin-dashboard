@@ -11,17 +11,22 @@ import { RiderPopup } from "./OrderPopups.jsx";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { server } from "../../main";
 
 const OrderTable = (props) => {
   const token = Cookies.get("dev.admin.horeka");
   const handleStatusChange = (status, id) => {
     //API Call to update order status
     try {
-      axios.put(`/api/orders/${id}?status=${status}`,{}, {
-        headers:{
-          Authorization: `Bearer ${token}`
+      axios.put(
+        `${server}/admin/orders/${id}?status=${status}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
       toast.success("Changed Order Status");
     } catch (err) {
       toast.error("Some Error Occurred");
@@ -89,7 +94,11 @@ const OrderTable = (props) => {
       header: "Payment Status",
     }),
     columnHelper.accessor("", {
-      cell: ({row}) => <div className="w-40">{row.original.rider?.profile.name || "Unassigned"}</div>,
+      cell: ({ row }) => (
+        <div className="w-40">
+          {row.original.rider?.profile.name || "Unassigned"}
+        </div>
+      ),
       header: "Rider",
     }),
     columnHelper.accessor("createdAt", {
@@ -130,7 +139,9 @@ const OrderTable = (props) => {
 
   return (
     <div className="p-2 max-w-5xl mx-auto text-white fill-gray-400 ">
-      {popUp && <RiderPopup setPopUp={setPopup} popUp={popUp} orderId={orderId} />}
+      {popUp && (
+        <RiderPopup setPopUp={setPopup} popUp={popUp} orderId={orderId} />
+      )}
       {/* Table */}
       <div className="h-[23em] md:h-[35em] lg:h-[23em] overflow-y-scroll no-scrollbar grid">
         <table className="border-collapse border-gray-700 w-auto text-left">

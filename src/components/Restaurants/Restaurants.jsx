@@ -3,6 +3,7 @@ import RestaurantTable from "./RestaurantTable";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Button from "../../common/Button";
+import { server } from "../../main";
 
 const Restaurants = () => {
   const token = Cookies.get("dev.admin.horeka");
@@ -12,7 +13,7 @@ const Restaurants = () => {
   useEffect(() => {
     axios
       .get(
-        `/api/restaurants?page=${
+        `${server}/admin/restaurants?page=${
           page - 1
         }&size=10&sortBy=name&sortDirection=asc`,
         {
@@ -21,7 +22,7 @@ const Restaurants = () => {
           },
         }
       )
-      .then((res) =>{ 
+      .then((res) => {
         setRestaurants(res.data.content);
         setmaxPages(res.data.totalPages);
       });
@@ -32,9 +33,9 @@ const Restaurants = () => {
         Restaurants
       </header>
       <div className="flex md:flex-row flex-col justify-between ">
-              <Button text="Add Restaurant" link="/addrestaurant"/>
-              {/* <Button text="Update Chicken Prices" link="www.oogll.com" /> */}
-              {/* <button
+        <Button text="Add Restaurant" link="/addrestaurant" />
+        {/* <Button text="Update Chicken Prices" link="www.oogll.com" /> */}
+        {/* <button
                 onClick={() => {
                   // setFilter(!filter);
                 }}
@@ -45,7 +46,7 @@ const Restaurants = () => {
                   Filters and Sorting
                 </span>
               </button> */}
-            </div>
+      </div>
       <RestaurantTable data={restaurants} />
       <div className="flex items-center justify-center mt-2 gap-2">
         <button

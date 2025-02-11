@@ -5,11 +5,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
-import { FaEdit } from "react-icons/fa";
-import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { server } from "../../main";
 
 const TransacTable = (props) => {
   const columnHelper = createColumnHelper();
@@ -18,7 +17,7 @@ const TransacTable = (props) => {
   const token = Cookies.get("dev.admin.horeka");
   useEffect(() => {
     axios
-      .get(`/api/payment/outlet/${id}`, {
+      .get(`${server}/admin/payment/outlet/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -26,9 +25,10 @@ const TransacTable = (props) => {
       .then((res) => {
         setData(res.data);
       });
-      console.log(data);
   }, []);
-  {/*function to correctly format the date*/}
+  {
+    /*function to correctly format the date*/
+  }
   const handleCreatedAt = (timestamp) => {
     // Convert to Date object
     const date = new Date(timestamp);
@@ -46,20 +46,23 @@ const TransacTable = (props) => {
 
     return date.toLocaleString("en-US", options);
   };
-  const handleStatusChange = async (id, status) =>{
-    try{
-        const res = await axios.put(`api/payment/${id}?status=${status}`,{},{
-            headers:{
-                Authorization: `Bearer ${token}`
-            }
-        });
-        if(res.status == 200) toast.success("Status Updated");
-        else throw new Error();
+  const handleStatusChange = async (id, status) => {
+    try {
+      const res = await axios.put(
+        `${server}/admin/payment/${id}?status=${status}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.status == 200) toast.success("Status Updated");
+      else throw new Error();
+    } catch (err) {
+      toast.error("Failed to update status");
     }
-    catch(err){
-        toast.error("Failed to update status");
-    }
-  }
+  };
   const columns = [
     columnHelper.accessor("id", {
       cell: (info) => <div>{info.getValue()}</div>,
@@ -82,12 +85,20 @@ const TransacTable = (props) => {
       header: "Created At",
     }),
     columnHelper.accessor("transactionImage", {
-      cell: (info) => <img src={info.getValue() || "https://placehold.co/40"}/>,
+      cell: (info) => (
+        <img src={info.getValue() || "https://placehold.co/40"} />
+      ),
       header: "Image",
     }),
     columnHelper.accessor("", {
-      cell: ({row}) => (
-        <select defaultValue={row.original.transactionStatus=='FAILED'?'REJECT':"ACCEPT"} className="text-white dark:bg-neutral-900 dark:border-neutral-700 rounded-lg py-3 px-2.5" onChange={(e)=>handleStatusChange(row.original.id,e.target.value)}>
+      cell: ({ row }) => (
+        <select
+          defaultValue={
+            row.original.transactionStatus == "FAILED" ? "REJECT" : "ACCEPT"
+          }
+          className="text-white dark:bg-neutral-900 dark:border-neutral-700 rounded-lg py-3 px-2.5"
+          onChange={(e) => handleStatusChange(row.original.id, e.target.value)}
+        >
           <option value="ACCEPT">Success</option>
           <option value="REJECT">Failed</option>
         </select>
