@@ -37,7 +37,7 @@ const AddOutlet = () => {
     formState: { errors },
     register,
   } = useForm({
-    resolver: yupResolver(productSchema),
+    resolver: yupResolver(outletSchema),
     defaultValues: {
       name: rowData?.name || "",
       shippingAddress: rowData?.address || "",
