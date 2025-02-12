@@ -38,6 +38,7 @@ const Products = () => {
   const [maxPages, setmaxPages] = useState(0);
   const token = Cookies.get("dev.admin.horeka");
   const [page, setPage] = useState(1);
+
   useEffect(() => {
     if (!search) {
       const apiURL =
@@ -95,12 +96,8 @@ const Products = () => {
       )
       .then((res) => {
         const data = res.data.content;
-        console.log(data);
         setmaxPages(res.data.totalPages);
         setProductList(data);
-      })
-      .catch((err) => {
-        console.log(err);
       });
   }, [category]);
   return (
