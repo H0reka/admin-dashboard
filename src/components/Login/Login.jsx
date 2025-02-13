@@ -58,7 +58,7 @@ const Login = () => {
       toast.error("Error Occurred", { theme: "dark" });
     }
   };
-  if (isAuthenticated) return <Navigate to="/products" />;
+  if (isAuthenticated) return <Navigate to="/" />;
 
   return (
     <div className="flex flex-col items-center justify-center h-screen p-4">
