@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import ProductTable from "./ProductTable";
 import Button from "../../common/Button";
 import Select from "../../common/Select";
@@ -31,8 +31,14 @@ const Products = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
+
+  // 🔥 Get initial state from URL
   const initialCategory = Number(queryParams.get("category")) || 0;
   const initialPage = Number(queryParams.get("page")) || 1;
+  const firstRender = useRef(true);
+  const manualCategoryChange = useRef(false); // Track if category is changed manually
+
+  // 🔥 State
   const [category, setCategory] = useState(initialCategory);
   const [order, setOrder] = useState("asc");
   const [search, setSearch] = useState("");
@@ -43,69 +49,34 @@ const Products = () => {
   const token = Cookies.get("dev.admin.horeka");
   const [page, setPage] = useState(initialPage);
 
-  // useEffect(() => {
-  //   let apiURL = "";
-
-  //   if (search) {
-  //     apiURL = `${server}/products/search?keywords=${search}`;
-  //   } else {
-  //     apiURL =
-  //       category === 0
-  //         ? `${server}/admin/products`
-  //         : `${server}/products/categories/${category}`;
-  //   }
-  //   axios
-  //     .get(
-  //       `${apiURL}?page=${page - 1}&sortBy=${column}&sortDirection=${order}`,
-  //       {
-  //         headers: token ? { Authorization: `Bearer ${token}` } : {},
-  //       }
-  //     )
-  //     .then((res) => {
-  //       setMaxPages(res.data.totalPages);
-  //       setProductList(res.data.content);
-  //     })
-  //     .catch((err) => console.error("API Fetch Error:", err));
-
-  //   // Ensure the URL updates when `page` changes
-  //   navigate(`?page=${page}`, { replace: true });
-  // }, [search, category, page, column, order]);
-  // useEffect(() => {
-  //   setPage(1);
-  // }, [category]);
-  // useEffect(() => {
-  //   if (location.pathname === "/" && !location.search.includes("category")) {
-  //     setCategory(0); // Reset category to show all products
-  //   }
-  // }, [location.pathname, location.search]);
+  // 🔥 Sync state with URL (for Back button functionality)
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const categoryFromUrl = queryParams.get("category");
-    const pageFromUrl = queryParams.get("page");
+    const categoryFromUrl = Number(queryParams.get("category")) || 0;
+    const pageFromUrl = Number(queryParams.get("page")) || 1;
 
-    // 🛠 Only update state if it's different
-    if (categoryFromUrl !== null) {
-      const parsedCategory = Number(categoryFromUrl);
-      if (category !== parsedCategory) {
-        setCategory(parsedCategory);
-      }
-    } else if (location.pathname === "/") {
-      if (category !== 0) setCategory(0); // Reset category when clicking `/`
+    if (category !== categoryFromUrl) {
+      setCategory(categoryFromUrl);
+      manualCategoryChange.current = false; // Reset manual change flag
     }
+    if (page !== pageFromUrl) {
+      setPage(pageFromUrl);
+    }
+  }, [location.search]);
 
-    if (pageFromUrl !== null) {
-      const parsedPage = Number(pageFromUrl);
-      if (page !== parsedPage) {
-        setPage(parsedPage);
-      }
-    } else {
-      if (page !== 1) setPage(1); // Ensure default page is 1
+  // 🔥 Only reset `page` to 1 when the category is changed via UI, not Back button
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return; // Skip first render
     }
-  }, [location.search]); // Runs whenever the URL changes
+    if (manualCategoryChange.current) {
+      setPage(1);
+    }
+  }, [category]);
 
   // 🔥 API Fetch when search/category/page/column/order changes
   useEffect(() => {
-    if (category === null || page === null) return; // Ensure state is set before fetching
+    if (category === null || page === null) return;
 
     let apiURL = search
       ? `${server}/products/search?keywords=${search}`
@@ -126,7 +97,7 @@ const Products = () => {
       })
       .catch((err) => console.error("API Fetch Error:", err));
 
-    // 🔥 Keep URL updated only if needed
+    // 🔥 Update URL only if needed
     const newUrl = `?page=${page}${
       category !== 0 ? `&category=${category}` : ""
     }`;
@@ -135,6 +106,11 @@ const Products = () => {
     }
   }, [search, category, page, column, order]);
 
+  // 🔥 Function to manually change category (set flag)
+  const handleCategoryChange = (newCategory) => {
+    manualCategoryChange.current = true; // Mark it as a manual change
+    setCategory(newCategory);
+  };
   return (
     <div className="ml-[4.2rem] lg:ml-[10.3rem] overflow-y-scroll h-[100vh] no-scrollbar">
       <header className="text-3xl text-brand font-bold mb-4">Products</header>
@@ -218,7 +194,7 @@ const Products = () => {
             <Select
               text="All"
               options={categoryOptions}
-              func={setCategory}
+              func={handleCategoryChange}
               init={category}
             />
           </div>
