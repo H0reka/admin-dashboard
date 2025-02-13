@@ -30,6 +30,7 @@ import Inventory from "./components/Inventory/Inventory";
 import Expenses from "./components/Expenses/Expenses";
 import InventoryDetails from "./components/Inventory/InventoryDetails";
 import Expense from "./components/Expenses/Expense";
+import ClaimedPayments from "./components/Claimed Payments/ClaimedPayments";
 
 function App() {
   return (
@@ -265,6 +266,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <Expense />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              exact
+              path="/claimedpayments"
+              element={
+                <PrivateRoute>
+                  <ClaimedPayments />
                 </PrivateRoute>
               }
             />

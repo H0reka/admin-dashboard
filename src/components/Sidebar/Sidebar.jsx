@@ -129,6 +129,16 @@ const Sidebar = () => {
                 </span>
               </li>
             </Link>
+            <Link to="/claimedpayments">
+              <li className="flex items-center p-4 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
+                <MdInventory size={24} />
+                <span
+                  className={`lg:block ${openSidebar ? "block" : "hidden"}`}
+                >
+                  Claimed Payments
+                </span>
+              </li>
+            </Link>
             <Link to="users">
               <li className="flex items-center p-4 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
                 <FaUser size={24} />
