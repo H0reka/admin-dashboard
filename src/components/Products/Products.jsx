@@ -6,7 +6,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import DebouncedInput from "../../common/DebouncedInput";
 import { FaSearch } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { server } from "../../main";
 
 const categoryOptions = [
@@ -28,78 +28,113 @@ const columnOptions = [
   { "MOQ Sale Price": "moq" },
 ];
 const Products = () => {
-  const { id } = useParams();
-  const [category, setCategory] = useState(id || 0);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const initialCategory = Number(queryParams.get("category")) || 0;
+  const initialPage = Number(queryParams.get("page")) || 1;
+  const [category, setCategory] = useState(initialCategory);
   const [order, setOrder] = useState("asc");
   const [search, setSearch] = useState("");
   const [column, setColumn] = useState("name");
   const [filter, setFilter] = useState(false);
   const [productList, setProductList] = useState([]);
-  const [maxPages, setmaxPages] = useState(0);
+  const [maxPages, setMaxPages] = useState(0);
   const token = Cookies.get("dev.admin.horeka");
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(initialPage);
 
+  // useEffect(() => {
+  //   let apiURL = "";
+
+  //   if (search) {
+  //     apiURL = `${server}/products/search?keywords=${search}`;
+  //   } else {
+  //     apiURL =
+  //       category === 0
+  //         ? `${server}/admin/products`
+  //         : `${server}/products/categories/${category}`;
+  //   }
+  //   axios
+  //     .get(
+  //       `${apiURL}?page=${page - 1}&sortBy=${column}&sortDirection=${order}`,
+  //       {
+  //         headers: token ? { Authorization: `Bearer ${token}` } : {},
+  //       }
+  //     )
+  //     .then((res) => {
+  //       setMaxPages(res.data.totalPages);
+  //       setProductList(res.data.content);
+  //     })
+  //     .catch((err) => console.error("API Fetch Error:", err));
+
+  //   // Ensure the URL updates when `page` changes
+  //   navigate(`?page=${page}`, { replace: true });
+  // }, [search, category, page, column, order]);
+  // useEffect(() => {
+  //   setPage(1);
+  // }, [category]);
+  // useEffect(() => {
+  //   if (location.pathname === "/" && !location.search.includes("category")) {
+  //     setCategory(0); // Reset category to show all products
+  //   }
+  // }, [location.pathname, location.search]);
   useEffect(() => {
-    if (!search) {
-      const apiURL =
-        category == 0
-          ? `${server}/admin/products`
-          : `${server}/products/categories/${category}`;
-      axios
-        .get(
-          `${apiURL}?page=${page - 1}&sortBy=${column}&sortDirection=${order}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
-        .then((res) => {
-          const data = res.data.content;
-          setmaxPages(res.data.totalPages);
-          setProductList(data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      axios
-        .get(
-          `${server}/products/search?keywords=${search}&page=${
-            page - 1
-          }&sortBy=${column}&sortDirection=${order}`
-        )
-        .then((res) => {
-          const data = res.data.content;
-          setmaxPages(res.data.totalPages);
-          setProductList(data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    const queryParams = new URLSearchParams(location.search);
+    const categoryFromUrl = queryParams.get("category");
+    const pageFromUrl = queryParams.get("page");
+
+    // 🛠 Only update state if it's different
+    if (categoryFromUrl !== null) {
+      const parsedCategory = Number(categoryFromUrl);
+      if (category !== parsedCategory) {
+        setCategory(parsedCategory);
+      }
+    } else if (location.pathname === "/") {
+      if (category !== 0) setCategory(0); // Reset category when clicking `/`
     }
-  }, [search, page, column, order]);
+
+    if (pageFromUrl !== null) {
+      const parsedPage = Number(pageFromUrl);
+      if (page !== parsedPage) {
+        setPage(parsedPage);
+      }
+    } else {
+      if (page !== 1) setPage(1); // Ensure default page is 1
+    }
+  }, [location.search]); // Runs whenever the URL changes
+
+  // 🔥 API Fetch when search/category/page/column/order changes
   useEffect(() => {
-    setPage(1);
-    const apiURL =
-      category == 0
-        ? `${server}/products`
-        : `${server}/products/categories/${category}`;
+    if (category === null || page === null) return; // Ensure state is set before fetching
+
+    let apiURL = search
+      ? `${server}/products/search?keywords=${search}`
+      : category === 0
+      ? `${server}/admin/products`
+      : `${server}/products/categories/${category}`;
+
     axios
       .get(
         `${apiURL}?page=${page - 1}&sortBy=${column}&sortDirection=${order}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
         }
       )
       .then((res) => {
-        const data = res.data.content;
-        setmaxPages(res.data.totalPages);
-        setProductList(data);
-      });
-  }, [category]);
+        setMaxPages(res.data.totalPages);
+        setProductList(res.data.content);
+      })
+      .catch((err) => console.error("API Fetch Error:", err));
+
+    // 🔥 Keep URL updated only if needed
+    const newUrl = `?page=${page}${
+      category !== 0 ? `&category=${category}` : ""
+    }`;
+    if (location.search !== newUrl) {
+      navigate(newUrl, { replace: true });
+    }
+  }, [search, category, page, column, order]);
+
   return (
     <div className="ml-[4.2rem] lg:ml-[10.3rem] overflow-y-scroll h-[100vh] no-scrollbar">
       <header className="text-3xl text-brand font-bold mb-4">Products</header>

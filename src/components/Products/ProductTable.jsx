@@ -11,17 +11,13 @@ import { Link } from "react-router-dom";
 const ProductTable = (props) => {
   const columnHelper = createColumnHelper();
   const [data, setData] = useState([...props.data]);
-  
+
   const columns = [
     columnHelper.accessor((row) => row.imageUrls[0], {
       id: "SpecificIndex",
       cell: (info) => (
         <img
-          src={
-            info.getValue()
-              ? info.getValue()
-              : "https://placehold.co/150"
-          }
+          src={info.getValue() ? info.getValue() : "https://placehold.co/150"}
           alt="..."
           className="w-10 h-10 object-cover"
         />
@@ -46,6 +42,15 @@ const ProductTable = (props) => {
     }),
     columnHelper.accessor("", {
       cell: ({ row }) => (
+        <label className="inline-flex items-center cursor-pointer col-span-6  gap-2">
+          <input type="checkbox" className="sr-only peer" />
+          <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-green-400  dark:peer-focus:ring-red-800 rounded-full peer dark:bg-green-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600"></div>
+        </label>
+      ),
+      header: "Out of Stock",
+    }),
+    columnHelper.accessor("", {
+      cell: ({ row }) => (
         <Link to={`/editproduct/${row.original.id}`}>
           <FaEdit className="cursor-pointer" size={24} />
         </Link>
@@ -54,9 +59,9 @@ const ProductTable = (props) => {
     }),
   ];
 
-   useEffect(() => {
-     setData([...props.data]);
-   }, [props.data]);
+  useEffect(() => {
+    setData([...props.data]);
+  }, [props.data]);
   const [globalFilter, setGlobalFilter] = useState("");
 
   const table = useReactTable({
@@ -66,15 +71,13 @@ const ProductTable = (props) => {
       globalFilter,
     },
     getCoreRowModel: getCoreRowModel(),
-
   });
 
   return (
     <div className="p-2 max-w-5xl mx-auto text-white fill-gray-400 ">
-      
       {/* Table */}
       <div className="md:h-[35em] lg:h-[23em] overflow-y-scroll no-scrollbar grid">
-      {/* <div className="h-[23em] md:h-[35em] lg:h-[23em] overflow-y-scroll no-scrollbar grid"> */}
+        {/* <div className="h-[23em] md:h-[35em] lg:h-[23em] overflow-y-scroll no-scrollbar grid"> */}
         <table className="border-collapse border-gray-700 w-auto text-left">
           <thead className="bg-indigo-600 sticky z-10 top-0">
             {table.getHeaderGroups().map((headerGroup) => (

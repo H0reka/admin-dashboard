@@ -45,7 +45,7 @@ function App() {
             <Route exact path="/login" element={<Login />} />
             <Route
               exact
-              path="/:id?"
+              path="/"
               element={
                 <PrivateRoute>
                   <Products />
