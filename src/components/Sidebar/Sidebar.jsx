@@ -34,7 +34,7 @@ const Sidebar = () => {
             className={`lg:hidden block transition-transform duration-300`}
             onClick={() => setOpenSidebar(!openSidebar)}
           >
-            {openSidebar ? <IoCloseSharp size={24} /> : <FaBars size={24} />}
+            {openSidebar ? <IoCloseSharp size={16} /> : <FaBars size={16} />}
           </button>
         </div>
         <div className="flex justify-between items-center p-4">
@@ -48,10 +48,10 @@ const Sidebar = () => {
         </div>
 
         <nav className="mt-4">
-          <ul>
+          <ul className="text-sm flex flex-col ">
             <Link to="/">
-              <li className="flex items-center p-4 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
-                <GiChickenLeg size={24} />
+              <li className="flex items-center p-2 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
+                <GiChickenLeg size={16} />
                 <span
                   className={`lg:block ${openSidebar ? "block" : "hidden"}`}
                 >
@@ -60,8 +60,8 @@ const Sidebar = () => {
               </li>
             </Link>
             <Link to="/categories">
-              <li className="flex items-center p-4 gap-2 hover:bg-indigo-700 cursor-pointer transition-all duration-300">
-                <BiSolidCategory size={24} />
+              <li className="flex items-center p-2 gap-2 hover:bg-indigo-700 cursor-pointer transition-all duration-300">
+                <BiSolidCategory size={16} />
                 <span
                   className={`lg:block ${openSidebar ? "block" : "hidden"}`}
                 >
@@ -70,8 +70,8 @@ const Sidebar = () => {
               </li>
             </Link>
             <Link to="/orders">
-              <li className="flex items-center p-4 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
-                <TbTruckDelivery size={24} />
+              <li className="flex items-center p-2 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
+                <TbTruckDelivery size={16} />
                 <span
                   className={`lg:block ${openSidebar ? "block" : "hidden"}`}
                 >
@@ -80,8 +80,8 @@ const Sidebar = () => {
               </li>
             </Link>
             <Link to="/restaurants">
-              <li className="flex items-center p-4 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
-                <IoRestaurant size={24} />
+              <li className="flex items-center p-2 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
+                <IoRestaurant size={16} />
                 <span
                   className={`lg:block ${openSidebar ? "block" : "hidden"}`}
                 >
@@ -90,8 +90,8 @@ const Sidebar = () => {
               </li>
             </Link>
             <Link to="/vendors">
-              <li className="flex items-center p-4 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
-                <BsPeopleFill size={24} />
+              <li className="flex items-center p-2 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
+                <BsPeopleFill size={16} />
                 <span
                   className={`lg:block ${openSidebar ? "block" : "hidden"}`}
                 >
@@ -100,8 +100,8 @@ const Sidebar = () => {
               </li>
             </Link>
             <Link to="/purchase">
-              <li className="flex items-center p-4 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
-                <BiSolidPurchaseTag size={24} />
+              <li className="flex items-center p-2 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
+                <BiSolidPurchaseTag size={16} />
                 <span
                   className={`lg:block ${openSidebar ? "block" : "hidden"}`}
                 >
@@ -110,8 +110,8 @@ const Sidebar = () => {
               </li>
             </Link>
             <Link to="/inventory">
-              <li className="flex items-center p-4 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
-                <MdInventory size={24} />
+              <li className="flex items-center p-2 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
+                <MdInventory size={16} />
                 <span
                   className={`lg:block ${openSidebar ? "block" : "hidden"}`}
                 >
@@ -120,8 +120,8 @@ const Sidebar = () => {
               </li>
             </Link>
             <Link to="/expenses">
-              <li className="flex items-center p-4 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
-                <MdInventory size={24} />
+              <li className="flex items-center p-2 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
+                <MdInventory size={16} />
                 <span
                   className={`lg:block ${openSidebar ? "block" : "hidden"}`}
                 >
@@ -130,18 +130,18 @@ const Sidebar = () => {
               </li>
             </Link>
             <Link to="/claimedpayments">
-              <li className="flex items-center p-4 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
-                <MdInventory size={24} />
+              <li className="flex items-center p-2 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
+                <MdInventory size={16} />
                 <span
                   className={`lg:block ${openSidebar ? "block" : "hidden"}`}
                 >
-                  Claimed Payments
+                  Payment Claims
                 </span>
               </li>
             </Link>
             <Link to="users">
-              <li className="flex items-center p-4 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
-                <FaUser size={24} />
+              <li className="flex items-center p-2 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300">
+                <FaUser size={16} />
                 <span
                   className={`lg:block ${openSidebar ? "block" : "hidden"}`}
                 >
@@ -152,10 +152,10 @@ const Sidebar = () => {
           </ul>
         </nav>
         <button
-          className="flex items-center w-full p-4 hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300 mt-24"
+          className="flex items-center w-full p-2 text-sm hover:bg-indigo-700 cursor-pointer gap-2 transition-all duration-300 mt-24"
           onClick={handleLogout}
         >
-          <IoLogOut size={24} />
+          <IoLogOut size={16} />
           <span className={`lg:block ${openSidebar ? "block" : "hidden"}`}>
             Logout
           </span>

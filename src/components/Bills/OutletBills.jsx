@@ -12,6 +12,9 @@ import {
 import { createTw } from "react-pdf-tailwind";
 import { Table, TD, TH, TR } from "@ag-media/react-pdf-table";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { server } from "../../main";
+import Cookies from "js-cookie";
 
 Font.register({
   family: "Roboto",
@@ -133,7 +136,7 @@ const convertToWords = (num) => {
 
   return result + " Only";
 };
-const Doc = ({ orders }) => (
+const InvoiceTemplate = ({ orders, phoneNumbers }) => (
   <Document>
     {orders.map((order, index) => (
       <Page key={index} size="A4" style={styles.page}>
@@ -170,7 +173,9 @@ const Doc = ({ orders }) => (
                 {order.outlet.name.toUpperCase()}
               </Text>
               <Text style={tw("text-sm")}>{order.outlet.address}</Text>
-              <Text style={tw("text-sm")}>CONTACT NUMBER</Text>
+              <Text style={tw("text-sm")}>
+                Contact: {phoneNumbers.get(order.outlet.id)?.substring(3)}
+              </Text>
               <Text style={tw("text-sm")}>GSTIN </Text>
               <Text style={tw("text-sm")}>State: {order.outlet.state}</Text>
             </View>
@@ -205,18 +210,22 @@ const Doc = ({ orders }) => (
                 <TD style={tw("ml-2")}>{item.product.hsnCode}</TD>
                 <TD>{item.quantity}</TD>
                 <TD>{item.product.unit.name}</TD>
-                <TD>₹ {item.product.moqSalePrice}</TD>
-                <TD>₹ {Math.trunc(item.price * item.quantity * 100) / 100}</TD>
-                <TD>{item.product.gstPercentage}</TD>
                 <TD>
                   ₹{" "}
-                  {Math.trunc(
-                    100 *
-                      item.price *
-                      item.quantity *
-                      (1 + item.product.gstPercentage / 100)
-                  ) / 100}
+                  {(
+                    item.price /
+                    (1 + item.product.gstPercentage / 100)
+                  ).toFixed(2)}
                 </TD>
+                <TD>
+                  ₹{" "}
+                  {(
+                    (item.price / (1 + item.product.gstPercentage / 100)) *
+                    item.quantity
+                  ).toFixed(2)}
+                </TD>
+                <TD>{item.product.gstPercentage}%</TD>
+                <TD>₹ {item.price * item.quantity}</TD>
               </TR>
             ))}
           </Table>
@@ -227,7 +236,9 @@ const Doc = ({ orders }) => (
               <Text style={tw("text-sm font-bold")}>
                 Invoice Amount in Words
               </Text>
-              <Text style={tw("text-xs")}>{convertToWords(order.amount)}</Text>
+              <Text style={tw("text-xs w-96")}>
+                {convertToWords(order.amount)}
+              </Text>
             </View>
             <View style={tw("flex flex-col gap-2")}>
               <Text style={tw("text-sm font-bold")}>Terms and Conditions</Text>
@@ -323,17 +334,36 @@ const Doc = ({ orders }) => (
 );
 const MyDocument = () => {
   const [ordersList, setOrdersList] = useState([]);
+  const [phoneNumbers, setPhoneNumbers] = useState(new Map());
   const location = useLocation();
   const { orders } = location.state;
+  const token = Cookies.get("dev.admin.horeka");
   useEffect(() => {
     console.log(orders);
+    const outlets = new Set();
+    orders.forEach((order) => {
+      outlets.add(order.outlet.id);
+    });
+    const ownerMappedOutlet = new Map();
+    for (const x of outlets) {
+      axios
+        .get(`${server}/admin/owner/outlet/${x}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => ownerMappedOutlet.set(x, res.data.phoneNum));
+    }
+    setPhoneNumbers(ownerMappedOutlet);
     setOrdersList(orders);
   }, []);
   return (
     <div className="h-[97vh] ml-40">
       <PDFViewer width="100%" height="100%">
         {/* <Doc/> */}
-        {ordersList && <Doc orders={orders} />}
+        {ordersList && (
+          <InvoiceTemplate orders={orders} phoneNumbers={phoneNumbers} />
+        )}
       </PDFViewer>
     </div>
   );

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { server } from "../../main";
+import Button from "../../common/Button";
 
 const PoolOrders = () => {
   const location = useLocation();
@@ -97,12 +98,9 @@ const PoolOrders = () => {
           <span>Total Products: {totalProducts}</span>
         </div>
         <div>
-          <button
-            className="bg-white text-black p-3 rounded-lg"
-            onClick={copyToClipboard}
-          >
-            Copy to Clipboard
-          </button>
+          <div onClick={copyToClipboard}>
+            <Button text="Copy to Clipboard" />
+          </div>
         </div>
       </div>
       <div className="p-3">
