@@ -16,10 +16,17 @@ const UpdateChicken = () => {
     axios.get(`${server}/products/categories/8?size=1000`).then((res) => {
       const array = res.data.content;
       setChickenProds(array);
-      const paperPrice = Math.trunc(
-        (array[1].moqSalePrice * 100) / array[1].chickenMultiplier / 100
+      const map = new Map();
+      const freqMap = array.reduce((acc, item) => {
+        const ratio = (item.moqSalePrice * 100) / item.chickenMultiplier / 100;
+        acc[ratio] = (acc[ratio] || 0) + 1;
+        return acc;
+      }, {});
+
+      const maxRatio = Object.keys(freqMap).reduce((a, b) =>
+        freqMap[a] > freqMap[b] ? a : b
       );
-      setPaperPrice(paperPrice);
+      setPaperPrice(Number(maxRatio));
     });
   }, []);
   useEffect(() => {

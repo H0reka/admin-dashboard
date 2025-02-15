@@ -99,6 +99,10 @@
     {
       "source": "/addexpense",
       "destination": "/index.html"
+    },
+    {
+      "source": "/claimedpayments",
+      "destination": "/index.html"
     }
   ]
 }
