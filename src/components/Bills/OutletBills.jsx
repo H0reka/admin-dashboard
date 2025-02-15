@@ -344,19 +344,25 @@ const MyDocument = () => {
     orders.forEach((order) => {
       outlets.add(order.outlet.id);
     });
+
     const ownerMappedOutlet = new Map();
-    for (const x of outlets) {
-      axios
-        .get(`${server}/admin/owner/outlet/${x}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((res) => ownerMappedOutlet.set(x, res.data.phoneNum));
-    }
-    setPhoneNumbers(ownerMappedOutlet);
+
+    Promise.all(
+      [...outlets].map((x) =>
+        axios
+          .get(`${server}/admin/owner/outlet/${x}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => ownerMappedOutlet.set(x, res.data.phoneNum))
+      )
+    ).then(() => {
+      setPhoneNumbers(new Map(ownerMappedOutlet));
+    });
+
     setOrdersList(orders);
-  }, []);
+  }, [orders]);
   return (
     <div className="h-[97vh] ml-40">
       <PDFViewer width="100%" height="100%">
