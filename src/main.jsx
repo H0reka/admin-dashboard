@@ -5,8 +5,7 @@ import App from "./App.jsx";
 import { ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
 
-export const server =
-  "https://horeka-cors-se5vtga7na-el.a.run.app/http://15.206.209.231:8080";
+export const server = import.meta.env.VITE_APP_SERVER;
 const initToken = Cookies.get("dev.admin.horeka");
 export const Context = createContext({
   isAuthenticated: initToken ? true : false,
