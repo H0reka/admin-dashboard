@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import RestaurantForm from "./RestaurantForm";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import { FaPlus } from "react-icons/fa";
+import { server } from "../../main";
+import axios from "axios";
 
 export const AddRestaurant = () => {
   const handleSubmission = () => {};
@@ -16,14 +18,36 @@ export const AddRestaurant = () => {
 
 export const EditRestaurant = () => {
   const token = Cookies.get("dev.admin.horeka");
-  const location = useLocation();
-  const initialData = location.state?.initialData;
+  const { id } = useParams();
+  const [initialData, setInitialData] = useState();
+  useEffect(() => {
+    if (!id) {
+      console.error("restaurantId is undefined");
+      return;
+    }
+    axios
+      .get(`${server}/admin/restaurants/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setInitialData(res.data); // Assuming you want to store the data
+      })
+      .catch((err) => console.error("Error fetching data:", err));
+  }, [id]);
+
   const handleSubmission = () => {};
   if (!initialData) return <div>Loading....</div>;
   return (
     <div className="ml-[4.2rem] lg:ml-[10.3rem] overflow-y-scroll no-scrollbar h-[90vh]">
       <header className="text-3xl text-brand font-bold">Edit Restaurant</header>
-      <RestaurantForm initialData={initialData} submitForm={handleSubmission} />
+      {initialData && (
+        <RestaurantForm
+          initialData={initialData}
+          submitForm={handleSubmission}
+        />
+      )}
       <div>
         {initialData ? (
           <div className=" text-white p-4 rounded-lg">
@@ -42,11 +66,7 @@ export const EditRestaurant = () => {
               {initialData.outlets.map((outlet, index) => {
                 return (
                   <Link
-                    to="/addoutlet"
-                    state={{
-                      data: initialData.outlets[index],
-                      restaurantId: initialData.id,
-                    }}
+                    to={`/editoutlet/${initialData.id}/${initialData.outlets[index].id}`}
                     className="rounded-lg border-2 h-32 max-h-32 w-32 flex  overflow-y-hidden"
                   >
                     <div className="flex flex-col justify-center items-center text-center">

@@ -4,21 +4,27 @@ import { ProductContext } from "../components/Products/ProductForm";
 import { Controller } from "react-hook-form";
 import { RestaurantContext } from "../components/Restaurants/RestaurantForm";
 // import { RestaurantContext } from "../components/Restaurants/AddRestaurant";
-import { OutletContext } from "../components/Restaurants/AddOutlet";
+import { OutletContext } from "../components/Restaurants/OutletForm";
 
 const NumberInput = ({ name, label, context }) => {
-  let control, errors, handlePriceFormulaChange,
-  handlePurchasePriceChange,
-  handleMoqSalePriceChange;
-    if( context === 'product'){
-      ({control,
+  let control,
+    errors,
+    handlePriceFormulaChange,
+    handlePurchasePriceChange,
+    handleMoqSalePriceChange;
+  if (context === "product") {
+    ({
+      control,
       errors,
       handlePriceFormulaChange,
       handlePurchasePriceChange,
       handleMoqSalePriceChange,
-    }  = useContext(ProductContext))}
-    else if(context === 'outlet'){({control, errors} = useContext(OutletContext))}
-    else { ({control, errors} = useContext(RestaurantContext))}
+    } = useContext(ProductContext));
+  } else if (context === "outlet") {
+    ({ control, errors } = useContext(OutletContext));
+  } else {
+    ({ control, errors } = useContext(RestaurantContext));
+  }
 
   const handleChange = (name, value) => {
     switch (name) {
@@ -47,7 +53,9 @@ const NumberInput = ({ name, label, context }) => {
             value={field.value == 0 ? "" : field.value}
             onChange={(e) => {
               field.onChange(e.target.value);
-              context==='product'?handleChange(name, Number(e.target.value)):"";
+              context === "product"
+                ? handleChange(name, Number(e.target.value))
+                : "";
             }}
             type="number"
             step="any"

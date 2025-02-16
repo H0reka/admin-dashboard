@@ -20,7 +20,8 @@ import AddUser from "./components/Users/AddUser";
 import PurchaseDetails from "./components/PurchaseMgmt/PurchaseDetails";
 import { AddRestaurant } from "./components/Restaurants/RestaurantRoutes";
 import { EditRestaurant } from "./components/Restaurants/RestaurantRoutes";
-import AddOutlet from "./components/Restaurants/AddOutlet";
+import { AddOutlet } from "./components/Restaurants/OutletRoutes";
+import { EditOutlet } from "./components/Restaurants/OutletRoutes";
 import EditOrder from "./components/Orders/EditOrder";
 import PoolOrders from "./components/Orders/PoolOrders";
 import UpdateChicken from "./components/Products/UpdateChicken";
@@ -172,7 +173,7 @@ function App() {
             />
             <Route
               exact
-              path="/editrestaurant"
+              path="/editrestaurant/:id"
               element={
                 <PrivateRoute>
                   <EditRestaurant />
@@ -185,6 +186,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <AddOutlet />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              exact
+              path="/editoutlet/:id/:outletId"
+              element={
+                <PrivateRoute>
+                  <EditOutlet />
                 </PrivateRoute>
               }
             />

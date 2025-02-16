@@ -97,7 +97,7 @@ const Products = () => {
       })
       .catch((err) => console.error("API Fetch Error:", err));
 
-    // 🔥 Update URL only if needed
+    // Update URL only if needed
     const newUrl = `?page=${page}${
       category !== 0 ? `&category=${category}` : ""
     }`;
@@ -106,7 +106,7 @@ const Products = () => {
     }
   }, [search, category, page, column, order]);
 
-  // 🔥 Function to manually change category (set flag)
+  // Function to manually change category (set flag)
   const handleCategoryChange = (newCategory) => {
     manualCategoryChange.current = true; // Mark it as a manual change
     setCategory(newCategory);

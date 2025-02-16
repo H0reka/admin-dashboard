@@ -57,7 +57,6 @@ const Orders = () => {
   };
   const handleInvoiceClick = () => {
     navigate("/outletbills", { state: { orders: orders } });
-    console.log(orders);
   };
   return (
     <div className="ml-[4.2rem] lg:ml-[10.3rem] overflow-scroll no-scrollbar h-[90vh]">

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
-import { OutletContext } from "./AddOutlet";
+import { OutletContext } from "./OutletForm";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { server } from "../../main";
