@@ -18,6 +18,7 @@ const Restaurants = () => {
   const [page, setPage] = useState(initialPage);
   const [maxPages, setMaxPages] = useState(0);
   const [restaurants, setRestaurants] = useState([]);
+  const [pageInput, setPageInput] = useState(1);
 
   useEffect(() => {
     axios
@@ -49,25 +50,49 @@ const Restaurants = () => {
         <Button text="Add Restaurant" link="/addrestaurant" />
       </div>
       <RestaurantTable data={restaurants} />
-      <div className="flex items-center justify-center mt-2 gap-2">
-        <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          disabled={page === 1}
-          className="p-1 border border-gray-300 px-2 disabled:opacity-30"
-        >
-          {"<"}
-        </button>
-        <span className="flex items-center gap-1">
-          <div>Page</div>
-          <strong>{page}</strong>
-        </span>
-        <button
-          onClick={() => setPage((prev) => Math.min(prev + 1, maxPages))}
-          disabled={page === maxPages}
-          className="p-1 border border-gray-300 px-2 disabled:opacity-30"
-        >
-          {">"}
-        </button>
+      {/* Pagination */}
+      <div className=" flex items-center justify-center flex-wrap">
+        <div className="flex items-center justify-center mt-2 gap-2">
+          <button
+            onClick={() => {
+              setPage(page - 1);
+            }}
+            disabled={page == 1 ? true : false}
+            className="p-1 border border-gray-300 px-2 disabled:opacity-30"
+          >
+            {"<"}
+          </button>
+          <span className="flex items-center gap-1">
+            <div>Page</div>
+            <strong>
+              {page} of {maxPages}
+            </strong>
+          </span>
+          <button
+            onClick={() => {
+              setPage(page + 1);
+            }}
+            disabled={page == maxPages ? true : false}
+            className="p-1 border border-gray-300 px-2 disabled:opacity-30"
+          >
+            {">"}
+          </button>
+        </div>
+        <div className="flex items-center gap-2 p-4">
+          <span className="text-white font-medium">Go to page:</span>
+          <input
+            type="number"
+            className="w-10 p-2 border rounded-md text-center text-black outline-none focus:ring-2 focus:ring-blue-500"
+            value={pageInput}
+            onChange={(e) => setPageInput(e.target.value)}
+          />
+          <button
+            onClick={() => setPage(pageInput)}
+            className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition"
+          >
+            Go
+          </button>
+        </div>
       </div>
     </div>
   );

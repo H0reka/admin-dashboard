@@ -14,11 +14,26 @@ import RiderPopup from "./RiderPopup";
 
 const UserTable = (props) => {
   const [popup, setPopup] = useState(false);
+  const [pageInput, setPageInput] = useState("");
   const [id, setId] = useState(0);
+  const [data, setData] = useState([...props.data]);
+  const [globalFilter, setGlobalFilter] = useState("");
+
   const columnHelper = createColumnHelper();
   const handleVerifyClick = (id) => {
     setPopup(!popup);
     setId(id);
+  };
+  const handleGoToPage = () => {
+    const pageNumber = Number(pageInput) - 1; // Convert input to zero-based index
+    if (
+      !isNaN(pageNumber) &&
+      pageNumber >= 0 &&
+      pageNumber < table.getPageCount()
+    ) {
+      table.setPageIndex(pageNumber);
+    }
+    setPageInput(""); // Clear input after navigation
   };
   const columns = [
     columnHelper.accessor("phoneNum", {
@@ -42,13 +57,10 @@ const UserTable = (props) => {
       header: "Actions",
     }),
   ];
-  const [data, setData] = useState([...props.data]);
 
   useEffect(() => {
     setData([...props.data]);
   }, [props.data]);
-
-  const [globalFilter, setGlobalFilter] = useState("");
 
   const table = useReactTable({
     data,
@@ -126,9 +138,7 @@ const UserTable = (props) => {
       <div className="flex md:flex-row flex-col items-center justify-center mt-2 gap-2">
         <div className="flex gap-2">
           <button
-            onClick={() => {
-              table.previousPage();
-            }}
+            onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
             className="p-1 border border-gray-300 px-2 disabled:opacity-30"
           >
@@ -142,13 +152,27 @@ const UserTable = (props) => {
             </strong>
           </span>
           <button
-            onClick={() => {
-              table.nextPage();
-            }}
+            onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
             className="p-1 border border-gray-300 px-2 disabled:opacity-30"
           >
             {">"}
+          </button>
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            value={pageInput}
+            onChange={(e) => setPageInput(e.target.value)}
+            className="w-16 p-2 border rounded-md text-center text-black outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Go to"
+          />
+          <button
+            onClick={handleGoToPage}
+            className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition"
+            disabled={!pageInput || isNaN(Number(pageInput))}
+          >
+            Go
           </button>
         </div>
       </div>

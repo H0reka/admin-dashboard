@@ -16,6 +16,7 @@ const Orders = () => {
   const [sortDirection, setSortDirection] = useState("desc");
   const [sortBy, setSortBy] = useState("createdAt");
   const [orderStatus, setOrderStatus] = useState("");
+  const [pageInput, setPageInput] = useState(1);
   const [value, setValue] = useState({
     startDate: null,
     endDate: null,
@@ -61,6 +62,7 @@ const Orders = () => {
   return (
     <div className="ml-[4.2rem] lg:ml-[10.3rem] overflow-scroll no-scrollbar h-[90vh]">
       <header className="text-3xl text-brand font-bold mb-4">Orders</header>
+      {/* Filter buttons */}
       <div className="flex md:flex-row flex-col justify-between">
         <select
           name="Order"
@@ -113,31 +115,53 @@ const Orders = () => {
           Clear
         </button>
       </div>
+      {/*Order table */}
       <OrderTable data={orders} />
-      <div className="flex items-center justify-center mt-2 gap-2">
-        <button
-          onClick={() => {
-            setPage(page - 1);
-          }}
-          disabled={page == 1 ? true : false}
-          className="p-1 border border-gray-300 px-2 disabled:opacity-30"
-        >
-          {"<"}
-        </button>
-        <span className="flex items-center gap-1">
-          <div>Page</div>
-          <strong>{page}</strong>
-        </span>
-        <button
-          onClick={() => {
-            setPage(page + 1);
-          }}
-          disabled={page == maxPages ? true : false}
-          className="p-1 border border-gray-300 px-2 disabled:opacity-30"
-        >
-          {">"}
-        </button>
+      {/* Pagination */}
+      <div className=" flex items-center justify-center flex-wrap">
+        <div className="flex items-center justify-center mt-2 gap-2">
+          <button
+            onClick={() => {
+              setPage(page - 1);
+            }}
+            disabled={page == 1 ? true : false}
+            className="p-1 border border-gray-300 px-2 disabled:opacity-30"
+          >
+            {"<"}
+          </button>
+          <span className="flex items-center gap-1">
+            <div>Page</div>
+            <strong>
+              {page} of {maxPages}
+            </strong>
+          </span>
+          <button
+            onClick={() => {
+              setPage(page + 1);
+            }}
+            disabled={page == maxPages ? true : false}
+            className="p-1 border border-gray-300 px-2 disabled:opacity-30"
+          >
+            {">"}
+          </button>
+        </div>
+        <div className="flex items-center gap-2 p-4">
+          <span className="text-white font-medium">Go to page:</span>
+          <input
+            type="number"
+            className="w-10 p-2 border rounded-md text-center text-black outline-none focus:ring-2 focus:ring-blue-500"
+            value={pageInput}
+            onChange={(e) => setPageInput(e.target.value)}
+          />
+          <button
+            onClick={() => setPage(pageInput)}
+            className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition"
+          >
+            Go
+          </button>
+        </div>
       </div>
+      {/* Pooling buttons */}
       <div className="flex md:flex-row flex-col justify-end gap-4 p-2">
         <div onClick={handlePoolClick}>
           <Button text="Pool Orders" />
