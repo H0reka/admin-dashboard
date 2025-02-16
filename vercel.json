@@ -57,11 +57,15 @@
       "destination": "/index.html"
     },
     {
-      "source": "/editrestaurant",
+      "source": "/editrestaurant/:id",
       "destination": "/index.html"
     },
     {
       "source": "/addoutlet",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/editoutlet/:id/:outletId",
       "destination": "/index.html"
     },
     {
