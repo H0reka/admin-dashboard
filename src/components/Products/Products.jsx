@@ -32,58 +32,57 @@ const Products = () => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
 
-  // 🔥 Get initial state from URL
+  // Get initial state from URL
   const initialCategory = Number(queryParams.get("category")) || 0;
   const initialPage = Number(queryParams.get("page")) || 1;
   const firstRender = useRef(true);
-  const manualCategoryChange = useRef(false); // Track if category is changed manually
+  const manualCategoryChange = useRef(false);
+  const firstSearchRender = useRef(true);
 
-  // 🔥 State
+  // State
   const [category, setCategory] = useState(initialCategory);
   const [order, setOrder] = useState("asc");
   const [search, setSearch] = useState("");
   const [column, setColumn] = useState("name");
-  const [filter, setFilter] = useState(false);
   const [productList, setProductList] = useState([]);
   const [maxPages, setMaxPages] = useState(0);
-  const [pageInput, setPageInput] = useState(1);
   const token = Cookies.get("dev.admin.horeka");
   const [page, setPage] = useState(initialPage);
+  const [pageInput, setPageInput] = useState(1);
+  const [filter, setFilter] = useState(false);
 
   // 🔥 Sync state with URL (for Back button functionality)
   useEffect(() => {
     const categoryFromUrl = Number(queryParams.get("category")) || 0;
     const pageFromUrl = Number(queryParams.get("page")) || 1;
-
     if (category !== categoryFromUrl) {
       setCategory(categoryFromUrl);
-      manualCategoryChange.current = false; // Reset manual change flag
+      manualCategoryChange.current = false;
     }
     if (page !== pageFromUrl) {
       setPage(pageFromUrl);
     }
   }, [location.search]);
 
-  // 🔥 Only reset `page` to 1 when the category is changed via UI, not Back button
+  // 🔥 Reset page to 1 when category changes via UI (not Back button)
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
-      return; // Skip first render
+      return;
     }
     if (manualCategoryChange.current) {
       setPage(1);
     }
   }, [category]);
 
-  // 🔥 API Fetch when search/category/page/column/order changes
+  // 🔥 API Fetch when search is EMPTY or category/page changes
   useEffect(() => {
-    if (category === null || page === null) return;
+    if (search) return; // If search is active, this should not run
 
-    let apiURL = search
-      ? `${server}/products/search?keywords=${search}`
-      : category === 0
-      ? `${server}/admin/products`
-      : `${server}/products/categories/${category}`;
+    let apiURL =
+      category === 0
+        ? `${server}/admin/products`
+        : `${server}/products/categories/${category}`;
 
     axios
       .get(
@@ -105,13 +104,50 @@ const Products = () => {
     if (location.search !== newUrl) {
       navigate(newUrl, { replace: true });
     }
-  }, [search, category, page, column, order]);
+  }, [category, page, column, order, search]); // 🔥 `search` in dependency ensures normal fetch when `search` is cleared
+
+  // 🔥 API Fetch when search is active
+  useEffect(() => {
+    if (!search) return; // If search is empty, don't run this (normal fetch will run)
+
+    if (firstSearchRender.current) {
+      firstSearchRender.current = false;
+      setPage(1); // 🔥 Reset to page 1 on first search call
+      return;
+    }
+
+    axios
+      .get(`${server}/products/search?keywords=${search}&page=${page - 1}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
+      .then((res) => {
+        setMaxPages(res.data.totalPages);
+        setProductList(res.data.content);
+      })
+      .catch((err) => console.error("Search API Fetch Error:", err));
+
+    // Update URL to reflect search state & page number
+    const newUrl = `?search=${encodeURIComponent(search)}&page=${page}`;
+    if (location.search !== newUrl) {
+      navigate(newUrl, { replace: true });
+    }
+  }, [search, page]);
 
   // Function to manually change category (set flag)
   const handleCategoryChange = (newCategory) => {
-    manualCategoryChange.current = true; // Mark it as a manual change
+    manualCategoryChange.current = true;
     setCategory(newCategory);
   };
+  useEffect(() => {
+    if (!search) {
+      firstSearchRender.current = true;
+    }
+  }, [search]);
+  // Function to handle search input change
+  const handleSearchChange = (newSearch) => {
+    setSearch(newSearch);
+  };
+
   return (
     <div className="ml-[4.2rem] lg:ml-[10.3rem] overflow-y-scroll h-[100vh] no-scrollbar">
       <header className="text-3xl text-brand font-bold mb-4">Products</header>
