@@ -117,8 +117,8 @@ const OutletForm = ({ initialData, restaurantId }) => {
     } else {
       const payload = { restaurantId, ...data };
       try {
-        //API Call to POST a new outlet
-        axios.post(`${server}/admin/outlets`, payload, {
+        // API Call to POST a new outlet
+        await axios.post(`${server}/admin/outlets`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         toast.success("Outlet Added Successfully!");

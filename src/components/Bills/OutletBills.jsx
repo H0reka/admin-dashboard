@@ -172,11 +172,13 @@ const InvoiceTemplate = ({ orders, phoneNumbers }) => (
               <Text style={tw("text-sm")}>
                 {order.outlet.name.toUpperCase()}
               </Text>
-              <Text style={tw("text-sm")}>{order.outlet.address}</Text>
+              <Text style={tw("text-sm")}>Address: {order.outlet.address}</Text>
               <Text style={tw("text-sm")}>
                 Contact: {phoneNumbers.get(order.outlet.id)?.substring(3)}
               </Text>
-              <Text style={tw("text-sm")}>GSTIN </Text>
+              <Text style={tw("text-sm")}>
+                GSTIN: {order.outlet.gstNumber ? order.outlet.gstNumber : ""}{" "}
+              </Text>
               <Text style={tw("text-sm")}>State: {order.outlet.state}</Text>
             </View>
             <View>
@@ -301,10 +303,10 @@ const InvoiceTemplate = ({ orders, phoneNumbers }) => (
                   >
                     Invoice To:
                   </Text>
-                  <Text style={tw("text-sm")}></Text>
+                  <Text style={tw("text-sm")}>{order.outlet.name}</Text>
                   <Text style={tw("text-sm")}>{order.outlet.address}</Text>
                 </View>
-                <View>
+                <View style={tw("ml-2")}>
                   <Text
                     style={[tw("mb-2 text-sm text-brand"), styles.textBold]}
                   >
@@ -339,12 +341,10 @@ const MyDocument = () => {
   const { orders } = location.state;
   const token = Cookies.get("dev.admin.horeka");
   useEffect(() => {
-    console.log(orders);
     const outlets = new Set();
     orders.forEach((order) => {
       outlets.add(order.outlet.id);
     });
-
     const ownerMappedOutlet = new Map();
 
     Promise.all(

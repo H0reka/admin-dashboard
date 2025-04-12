@@ -23,7 +23,11 @@ const TransacTable = (props) => {
         },
       })
       .then((res) => {
-        setData(res.data);
+        const transactionArray = res.data;
+        transactionArray.sort(
+          (transaction1, transaction2) => transaction2.id - transaction1.id
+        );
+        setData(transactionArray);
       });
   }, []);
   {
@@ -94,11 +98,18 @@ const TransacTable = (props) => {
       cell: ({ row }) => (
         <select
           defaultValue={
-            row.original.transactionStatus == "FAILED" ? "REJECT" : "ACCEPT"
+            row.original.transactionStatus == "FAILED"
+              ? "REJECT"
+              : row.original.transactionStatus == "INITIATED"
+              ? "Init"
+              : "ACCEPT"
           }
           className="text-white dark:bg-neutral-900 dark:border-neutral-700 rounded-lg py-3 px-2.5"
           onChange={(e) => handleStatusChange(row.original.id, e.target.value)}
         >
+          <option disabled value="Init">
+            Initiated
+          </option>
           <option value="ACCEPT">Success</option>
           <option value="REJECT">Failed</option>
         </select>

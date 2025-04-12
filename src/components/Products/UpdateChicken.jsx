@@ -39,7 +39,6 @@ const UpdateChicken = () => {
     }
   }, [paperPrice]);
   const handleSubmit = () => {
-    console.log(updatedPrices);
     //API call to update the chicken prices
     try {
       axios.put(

@@ -94,12 +94,10 @@ const RestaurantForm = ({ initialData, submitForm }) => {
       };
       try {
         //API Call to PUT and update a restaurant
-        const res = await axios.put(`${server}/admin/restaurants`, payload, {
+        await axios.put(`${server}/admin/restaurants`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (res.status == 200)
-          toast.success("Restaurant Updated Successfully!");
-        else throw new Error();
+        toast.success("Restaurant Updated Successfully!");
       } catch (err) {
         toast.error("Some Error Occurred");
       }
